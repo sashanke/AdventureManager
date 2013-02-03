@@ -43,7 +43,7 @@
 
 	<target name="compile">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" classpathref="classpath" />
+		<javac encoding="UTF-8" srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" classpathref="classpath" />
 		<copy todir="${classes.dir}">
 			<fileset dir="${base.dir}" includes="*.yml, *.properties" />
 		</copy>
