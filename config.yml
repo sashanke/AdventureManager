@@ -1,0 +1,21 @@
+pollTime: 30
+resetAfterLastPlayer: false
+resetTime: 60
+enabledWorlds:
+  - Test
+useTimedReset: true
+timedResetWorlds:
+  Test:
+    resetTime: 360
+    messageAfterReset: After!
+    messageBeforeReset: Before!
+    messageBeforeTime: 60
+    messageAfterTime: 60
+    messageRestrictToWorld: false
+  Walls:
+    resetTime: 360
+    messageAfterReset: After!
+    messageBeforeReset: Before!
+    messageBeforeTime: 60
+    messageAfterTime: 60
+    messageRestrictToWorld: true

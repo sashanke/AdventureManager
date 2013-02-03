@@ -1,0 +1,10 @@
+name: AdventureManager
+main: com.github.calenria.adventuremanager.AdventureManager
+version: 0.3
+website: https://github.com/Calenria/AdventureManager
+author: Calenria
+description: AdventureManager!
+database: false
+load: POSTWORLD
+depend: ['Multiverse-Core','WorldEdit']
+             
