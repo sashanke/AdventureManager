@@ -59,7 +59,6 @@
 				<attribute name="Main-Class" value="${main-class}" />
 				<attribute name="Version" value="${version}" />
 			</manifest>
-			<zipgroupfileset dir="${lib.dir}/externals/" includes="*.jar" excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA, maven"/>
 		</jar>
 	</target>
 
