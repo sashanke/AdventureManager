@@ -47,20 +47,20 @@ import com.sk89q.minecraft.util.commands.WrappedCommandException;
 
 public class AdventureManager extends JavaPlugin implements MVPlugin {
 
-    private static Logger                   log              = Logger.getLogger("Minecraft");
-    private static final String             logPrefix        = "[AdventureManager] ";
-    public CommandsManager<CommandSender>   commands;
-    public static MultiverseCore            multiversePlugin;
-    public static String                    pluginPath;
-    private final static int                requiresProtocol = 14;
+    private static Logger                            log              = Logger.getLogger("Minecraft");
+    private static final String                      logPrefix        = "[AdventureManager] ";
+    public CommandsManager<CommandSender>            commands;
+    public static MultiverseCore                     multiversePlugin;
+    public static String                             pluginPath;
+    private final static int                         requiresProtocol = 14;
 
-    private static HashMap<String, AMWorld> playersPerWorld  = new HashMap<String, AMWorld>();
+    private static volatile HashMap<String, AMWorld> playersPerWorld  = new HashMap<String, AMWorld>();
 
-    private static AdventureManager         plugin;
+    private static AdventureManager                  plugin;
 
-    public BukkitTask                       task;
+    public BukkitTask                                task;
 
-    private static AdventureManagerListener listener;
+    private static AdventureManagerListener          listener;
 
     public AdventureManager() {
         plugin = this;
@@ -108,19 +108,17 @@ public class AdventureManager extends JavaPlugin implements MVPlugin {
                     Set<String> playersKeySet = playersPerWorld.keySet();
                     for (String world : playersKeySet) {
                         if (Bukkit.getServer().getWorld(world).getPlayers().size() == 0) {
-                            synchronized (playersPerWorld) {
-                                if (checkReset(playersPerWorld.get(world))) {
-                                    log.log(Level.INFO, String.format("[%s] Resetting World %s", getDescription().getName(), world));
-                                    playersPerWorld.remove(world);
+                            if (checkReset(playersPerWorld.get(world))) {
+                                log.log(Level.INFO, String.format("[%s] Resetting World %s", getDescription().getName(), world));
+                                playersPerWorld.remove(world);
 
-                                    final File worldFolder = new File(plugin.getServer().getWorldContainer().getAbsoluteFile() + File.separator + world);
-                                    final File worldTemplateFolder = new File(plugin.getServer().getWorldContainer().getAbsoluteFile() + File.separator + world + ".Template");
+                                final File worldFolder = new File(plugin.getServer().getWorldContainer().getAbsoluteFile() + File.separator + world);
+                                final File worldTemplateFolder = new File(plugin.getServer().getWorldContainer().getAbsoluteFile() + File.separator + world + ".Template");
 
-                                    try {
-                                        Commands.resetWorld(null, world, worldFolder, worldTemplateFolder);
-                                    } catch (CommandException e) {
-                                        log.log(Level.SEVERE, e.getLocalizedMessage(), e);
-                                    }
+                                try {
+                                    Commands.resetWorld(null, world, worldFolder, worldTemplateFolder);
+                                } catch (CommandException e) {
+                                    log.log(Level.SEVERE, e.getLocalizedMessage(), e);
                                 }
                             }
                         }
@@ -232,36 +230,32 @@ public class AdventureManager extends JavaPlugin implements MVPlugin {
         return requiresProtocol;
     }
 
-    public synchronized void setAktivePlayer(World world, Boolean join) {
-        synchronized (playersPerWorld) {
-            if (playersPerWorld.containsKey(world.getName()) && join) {
-                AMWorld amworld = playersPerWorld.get(world.getName());
-                amworld.lastPlayerJoin = new Date();
-                playersPerWorld.put(world.getName(), amworld);
-            } else if (join) {
-                AMWorld amworld = new AMWorld();
-                amworld.lastPlayerJoin = new Date();
-                amworld.world = world;
-                playersPerWorld.put(world.getName(), amworld);
-            }
+    public void setAktivePlayer(World world, Boolean join) {
+        if (playersPerWorld.containsKey(world.getName()) && join) {
+            AMWorld amworld = playersPerWorld.get(world.getName());
+            amworld.lastPlayerJoin = new Date();
+            playersPerWorld.put(world.getName(), amworld);
+        } else if (join) {
+            AMWorld amworld = new AMWorld();
+            amworld.lastPlayerJoin = new Date();
+            amworld.world = world;
+            playersPerWorld.put(world.getName(), amworld);
+        }
 
-            if (playersPerWorld.containsKey(world.getName()) && !join) {
-                AMWorld amworld = playersPerWorld.get(world.getName());
-                amworld.lastPlayerLeave = new Date();
-                playersPerWorld.put(world.getName(), amworld);
-            } else if (!join) {
-                AMWorld amworld = new AMWorld();
-                amworld.world = world;
-                amworld.lastPlayerLeave = new Date();
-                playersPerWorld.put(world.getName(), amworld);
-            }
+        if (playersPerWorld.containsKey(world.getName()) && !join) {
+            AMWorld amworld = playersPerWorld.get(world.getName());
+            amworld.lastPlayerLeave = new Date();
+            playersPerWorld.put(world.getName(), amworld);
+        } else if (!join) {
+            AMWorld amworld = new AMWorld();
+            amworld.world = world;
+            amworld.lastPlayerLeave = new Date();
+            playersPerWorld.put(world.getName(), amworld);
         }
     }
 
-    public synchronized static void removeWorldFromList(String world) {
-        synchronized (playersPerWorld) {
-            playersPerWorld.remove(world);
-        }
+    public static void removeWorldFromList(String world) {
+        playersPerWorld.remove(world);
     }
 
     /**
