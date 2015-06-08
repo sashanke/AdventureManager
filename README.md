@@ -3,6 +3,11 @@ AdventureManager
 
 Ein kleines Plugin um Welten wieder den Ursprungszustand zu versetzen, nützlich für Adventure, Parkour oder Event Maps wie The Walls
 
+Download
+=======
+
+[AdventureManager v0.4](https://github.com/Calenria/AdventureManager/releases/download/v0.4/AdventureManager.jar)
+
 Befehle
 =======
 ```
