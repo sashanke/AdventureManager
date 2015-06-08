@@ -1,6 +1,6 @@
 name: AdventureManager
 main: com.github.calenria.adventuremanager.AdventureManager
-version: 0.3
+version: 0.4
 website: https://github.com/Calenria/AdventureManager
 author: Calenria
 description: AdventureManager!

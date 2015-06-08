@@ -78,3 +78,4 @@ logs/*
 /public/javascripts/min
 /public/javascripts/old
 precompiled
+/bin/
